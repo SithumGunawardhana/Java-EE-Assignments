@@ -11,6 +11,8 @@
        text-align: center;
     }
 </style>
+
+
 </head>
 <body>
 
@@ -19,7 +21,7 @@
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid " >
 
-            <a class="navbar-brand col-lg-8" href="#" >Customer Form </a>
+            <a class="navbar-brand col-lg-8 p-2" href="#" >Super Marcket </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -31,16 +33,16 @@
                 <div class="offcanvas-body bg-dark" >
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 ">
                         <li class="nav-item">
-                            <a class="nav-link " href="http://localhost:63342/Css-framewors_spa/index.html?_ijt=6n53vdaf1i8ki5jcji7ha3sdf0&_ij_reload=RELOAD_ON_SAVE">Home</a>
+                            <a class="nav-link " href="../index.html">Home</a>
                         </li>
                         <li class="nav-item ">
-                            <a class="nav-link" href="http://localhost:63342/Css-framewors_spa/pages/item.html">Customer</a>
+                            <a class="nav-link" href="customer.html">Customer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="http://localhost:63342/Css-framewors_spa/pages/item.html">Item</a>
+                            <a class="nav-link" href="item.html">Item</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link "  href="http://localhost:63342/Css-framewors_spa/pages/perch-Order.html">Order</a>
+                            <a class="nav-link "  href="perch-Order.html">Order</a>
                         </li>
                     </ul>
 
@@ -57,34 +59,34 @@
         <h2>Registration Form</h2>
         <form class="row g-3" style="text-align: center"  id="customerForm">
             <div class="col-md-6">
-                <label for="cusId" class="form-label">Customer Id</label>
+                <label for="cusId" class="form-label" id="txtCustomerId">Customer Id</label>
                 <input type="text" class="form-control" id="cusId" placeholder="C001-001" name="cusId">
             </div>
             <div class="col-md-6">
-                <label for="cusName" class="form-label">Customer Name</label>
+                <label for="cusName" class="form-label" id="txtCustomerName">Customer Name</label>
                 <input type="text" class="form-control" id="cusName" placeholder=" Sithum Thilanka" name="cusName">
             </div>
             <div class="col-md-6">
-                <label for="cusAddress" class="form-label">Customer Address</label>
-                <input type="text" class="form-control" id="cusAddress" placeholder="no 17 , Shopping Complex , Hikkaduwa" name="cusAddtress">
+                <label for="cusAddress" class="form-label" id="txtCustomerAddress">Customer Address</label>
+                <input type="text" class="form-control" id="cusAddress" placeholder="no 17 , Shopping Complex , Hikkaduwa" name="cusAddress">
             </div>
             <div class="col-md-6">
-                <label for="cusSalary" class="form-label">Customer Salary</label>
+                <label for="cusSalary" class="form-label" id="txtCustomerSalary">Customer Salary</label>
                 <input type="text" class="form-control" id="cusSalary" placeholder="100000" name="cusSalary">
             </div>
 
         </form>
 
             <div class="col-12 d-i"   style="text-align: center">
-                <button type="button" class="btn btn-primary" >Save</button>
+                <button type="button" class="btn btn-primary" id="btnSave" >Save</button>
 
-                <button type="button" class="btn btn-primary bg-danger">Remove</button>
+                <button type="button" class="btn btn-primary bg-danger" id="btnRemove">Remove</button>
 
-                <button type="button" class="btn btn-primary bg-black">Update</button>
+                <button type="button" class="btn btn-primary bg-black" id="btnUpdate">Update</button>
 
-                <button type="button" class="btn btn-primary bg-black">Get All</button>
+                <button type="button" class="btn btn-primary bg-black" id="btnGetAll">Get All</button>
 
-                <button type="button" class="btn btn-primary bg-black">Clear</button>
+                <button type="button" class="btn btn-primary bg-black" id="btnClear">Clear</button>
             </div>
 
 
@@ -105,6 +107,9 @@
                     <th scope="col">Salary</th>
                 </tr>
                 </thead>
+            <tbody id="tblCustomer">
+
+            </tbody>
 
 
         </table>
@@ -112,9 +117,90 @@
 
 </main>
 
+<script src="../assest/js/bootstrap.js"></script>
 
+<script src="../assest/js/jquery-3.7.0.min.js"></script>
 <script>
-    
+
+
+    getAllCustomer();
+
+    $("#btnGetAll").click(function (){
+        getAllCustomer();
+    });
+
+function getAllCustomer() {
+    $("#tblCustomer").empty();
+
+    $.ajax({
+        url:'customer',
+        success:function (res){
+            console.log(res);
+            for (let customer of res){
+                let row=`<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
+                $("#tblCustomer").append(row)
+            }
+        }
+    });
+}
+
+
+$("#btnSave").click(function () {
+    let formData = $("#customerForm").serialize();
+    // console.log(formData);
+    $.ajax({
+        url: 'customer',
+        method: "post",
+        data: formData,
+        success: function (res) {
+            alert(res.message);
+            getAllCustomer();
+        },
+        error: function (error) {
+            alert(error.responseJSON.message);
+        }
+
+    });
+
+});
+
+$("#btnRemove").click(function (){
+    let id=$("txtCustomerId").val();
+    $.ajax({
+        url:"customer?cusId="+id,
+        method: "delete",
+        success: function (res){
+            alert(res.message);
+            getAllCustomer();
+        },
+        error:function (error){
+            alert(error.responseJSON.message);
+        }
+    });
+
+});
+
+
+$("#btnUpdate").click(function (){
+    let id=$("#txtCustomerId").val();
+    let name=$("#txtCustomerName").val();
+    let address=$("#txtCustomerAddress").val();
+    let salary=$("#txtCustomerSalary").val();
+
+    $.ajax({
+        url:"customer?cusId="+id+"&cusName="+name+"&cusAddress="+address+"&cusSalary="+salary,
+        method:"put",
+        success:function (res){
+            alert(res.message);
+            getAllCustomer();
+        },
+        error:function (error){
+            alert(error.responseJSON.message);
+        }
+
+
+    });
+});
 
 
 </script>

@@ -6,6 +6,10 @@
         <element id="directory" name="classes">
           <element id="module-output" name="JavaEEAssignments" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="javax.json-1.1.4" />
+          <element id="library" level="project" name="mysql-connector-java-8.0.26" />
+        </element>
       </element>
       <element id="javaee-facet-resources" facet="JavaEEAssignments/web/Web" />
     </root>
