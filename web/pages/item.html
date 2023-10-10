@@ -11,6 +11,8 @@
             text-align: center;
         }
     </style>
+
+
 </head>
 <body>
 
@@ -31,16 +33,16 @@
                 <div class="offcanvas-body bg-dark" >
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 ">
                         <li class="nav-item">
-                            <a class="nav-link " href="http://localhost:63342/Css-framewors_spa/index.html?_ijt=6n53vdaf1i8ki5jcji7ha3sdf0&_ij_reload=RELOAD_ON_SAVE">Home</a>
+                            <a class="nav-link " href="../index.html">Home</a>
                         </li>
                         <li class="nav-item ">
-                            <a class="nav-link" href="http://localhost:63342/Css-framewors_spa/pages/customer.html">Customer</a>
+                            <a class="nav-link" href="customer.html">Customer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="http://localhost:63342/Css-framewors_spa/pages/item.html">Item</a>
+                            <a class="nav-link" href="item.html">Item</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link "  href="http://localhost:63342/Css-framewors_spa/pages/perch-Order.html">Order</a>
+                            <a class="nav-link "  href="perch-Order.html">Order</a>
                         </li>
                     </ul>
 
@@ -55,38 +57,39 @@
     <section>
         <br><br><br>
         <h2>Add Items</h2>
-        <form class="row g-3" style="text-align: center">
+        <form class="row g-3" style="text-align: center" id="itmForm">
             <div class="col-md-6">
-                <label for="IC" class="form-label">Item Code</label>
-                <input type="text" class="form-control" id="IC" placeholder="I001">
+                <label for="itemCode" class="form-label" >Item Code</label>
+                <input type="text" class="form-control" id="itemCode" placeholder="I001" name="iCode">
             </div>
             <div class="col-md-6">
                 <label for="IN" class="form-label">Item Name</label>
-                <input type="text" class="form-control" id="IN" placeholder=" Rice">
+                <input type="text" class="form-control" id="IN" placeholder=" Rice" name="iName">
             </div>
             <div class="col-md-6">
                 <label for="IQ" class="form-label">Item Quentity</label>
-                <input type="text" class="form-control" id="IQ" placeholder="25">
+                <input type="text" class="form-control" id="IQ" placeholder="25" name="iQty">
             </div>
             <div class="col-md-6">
                 <label for="UP" class="form-label">Unit Price</label>
-                <input type="text" class="form-control" id="UP" placeholder="150">
+                <input type="text" class="form-control" id="UP" placeholder="150" name="iUniPrice">
             </div>
+        </form>
 
             <div class="col-12 d-i"   style="text-align: center">
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
 
-                <button type="submit" class="btn btn-primary bg-danger">Remove</button>
+                <button type="submit" class="btn btn-primary bg-danger" id="btnDelete">Remove</button>
 
-                <button type="submit" class="btn btn-primary bg-black">Update</button>
+                <button type="submit" class="btn btn-primary bg-black" id="btnUpdate">Update</button>
 
-                <button type="submit" class="btn btn-primary bg-black">Get All</button>
+                <button type="submit" class="btn btn-primary bg-black" id="btnGetAll">Get All</button>
 
-                <button type="submit" class="btn btn-primary bg-black">Clear</button>
+                <button type="submit" class="btn btn-primary bg-black" id="btnClear">Clear</button>
             </div>
 
 
-        </form>
+
 
     </section>
 
@@ -103,12 +106,128 @@
                 <th scope="col">Unit Price</th>
             </tr>
             </thead>
+            <tbody id="tblItem">
+            
+            </tbody>
 
 
         </table>
     </section>
 
 </main>
+
+
+<script src="../assest/js/jquery-3.7.0.min.js"></script>
+<script>
+
+    function getAllItems(){
+        $("#tblItem").empty();
+
+        $.ajax({
+            url:"item",
+            success:function (res){
+                for (let item of res){
+                    let row=`<tr><td>${item.code}</td><td>${item.name}</td><td>${item.qty}</td><td>${item.uniPrice}</td></tr>`
+
+                    $("#tblItem").append(row);
+                }
+            }
+        })
+    }
+
+    $("#btnGetAll").click(function (){
+        getAllItems();
+    })
+
+    getAllItems();
+
+    function clear(){
+        let code= $("#itemCode").val();
+        let name=$("#IN").val();
+        let qty=$("#IQ").val();
+        let up=$("#UP").val();
+
+        code="";
+        name="";
+        qty="";
+        up="";
+
+    }
+
+
+
+
+    $("#btnSave").click(function (){
+        let dataform=$("#itmForm").serialize();
+
+
+        $.ajax({
+            url:'item',
+            method:"post",
+            data:dataform,
+            success:function (res){
+                alert(res.message);
+                getAllItems();
+            },
+            error:function (er){
+                alert(er.reponseJSON.message);
+            }
+
+        })
+    })
+
+
+    $("#btnDelete").click(function (){
+        let id=$("#itemCode").val();
+        $.ajax({
+            url:"item?iCode="+id,
+            method: "delete",
+            success: function (res){
+                alert(res.message);
+                getAllItems();
+            },
+            error:function (error){
+                alert(error.responseJSON.message);
+            }
+        });
+
+    });
+
+
+    $("#btnUpdate").click(function (){
+        let code=$("#itemCode").val();
+        let name=$("#IN").val();
+        let qty=$("#IQ").val();
+        let uni=$("#UP").val();
+
+        $.ajax({
+            url:"item?iCode="+code+"&iName="+name+"&iQty="+qty+"&iUniPrice="+uni,
+            method:"put",
+            success:function (su){
+                alert(su.message);
+                getAllItems();
+            },
+            error:function (er){
+                alert(er.responseJson.message);
+            }
+        });
+
+    });
+
+
+    $("#btnClear").click(function (){
+        // document.getElementById("itemCode").value="";
+
+    $("#itemCode").hide()
+    ;
+
+       // clear();
+
+    })
+
+
+
+</script>
 
 
 

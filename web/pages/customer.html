@@ -165,7 +165,7 @@ $("#btnSave").click(function () {
 });
 
 $("#btnRemove").click(function (){
-    let id=$("txtCustomerId").val();
+    let id=$("#cusId").val();
     $.ajax({
         url:"customer?cusId="+id,
         method: "delete",
@@ -182,10 +182,10 @@ $("#btnRemove").click(function (){
 
 
 $("#btnUpdate").click(function (){
-    let id=$("#txtCustomerId").val();
-    let name=$("#txtCustomerName").val();
-    let address=$("#txtCustomerAddress").val();
-    let salary=$("#txtCustomerSalary").val();
+    let id=$("#cusId").val();
+    let name=$("#cusName").val();
+    let address=$("#cusAddress").val();
+    let salary=$("#cusSalary").val();
 
     $.ajax({
         url:"customer?cusId="+id+"&cusName="+name+"&cusAddress="+address+"&cusSalary="+salary,
